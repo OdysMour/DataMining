@@ -113,20 +113,18 @@ X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
 # 3. Train cost-sensitive XGBoost
 # Define parameter grid
 param_grid = {
-    'max_depth': [3, 5, 7],
-    'min_child_weight': [1, 3, 5],
-    'subsample': [0.6, 0.8, 1.0],
-    'colsample_bytree': [0.6, 0.8, 1.0],
-    'learning_rate': [0.01, 0.1, 0.3]
+    'gamm'
 }
 
+
 scale_pos_weight = len(y[y==0]) / len(y[y==1])
-xgb = XGBClassifier(
-    scale_pos_weight=scale_pos_weight,
+xgb = XGBClassifier(max_depth =6,min_child_weight =0, learning_rate =0.31,
+                    scale_pos_weight=scale_pos_weight,
     eval_metric='aucpr'  # Optimize for AUC-PR
 )
 grid_search = GridSearchCV(estimator=xgb, param_grid=param_grid, cv=3,n_jobs=-1, scoring='average_precision')
 grid_search.fit(X_train_res, y_train_res)
+
 # Print best parameters
 print(f"Best parameters: {grid_search.best_params_}")
 print(f"Best score: {grid_search.best_score_}")
